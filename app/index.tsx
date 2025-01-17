@@ -10,4 +10,5 @@ export default function Index() {
 
   return <Redirect href="/login" />;
   // return <Redirect href="/room/428563" />;
+  // return <Redirect href="/home" />;
 }

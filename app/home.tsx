@@ -6,6 +6,7 @@ import { LoadingScreen } from "../components/LoadingScreen";
 import { LinearGradient } from "expo-linear-gradient";
 import { useAuth } from "../contexts/AuthContext";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { StatusBar } from "expo-status-bar";
 
 export default function HomeScreen() {
   const [isLoading, setIsLoading] = useState(true);
@@ -25,6 +26,7 @@ export default function HomeScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
+      <StatusBar style="light" />
       <Text style={styles.welcomeText}>Hi {user?.name || "Player"},</Text>
       <Text style={styles.subText}>
         Welcome to the arena, be ready with coins to bet
