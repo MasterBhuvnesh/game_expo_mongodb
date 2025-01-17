@@ -1,9 +1,8 @@
 import React, { useState } from "react";
 import { View, StyleSheet, Animated, TouchableOpacity } from "react-native";
-import { TextInput, Button, Text, Checkbox } from "react-native-paper";
+import { TextInput, Text } from "react-native-paper";
 import { router } from "expo-router";
 import { useAuth } from "../contexts/AuthContext";
-import { useLoading } from "../contexts/LoadingContext";
 import { LinearGradient } from "expo-linear-gradient";
 import { StatusBar } from "expo-status-bar";
 
@@ -13,7 +12,6 @@ export default function RegisterScreen() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
-
   const [loading, setLoading] = useState(false);
   const { register } = useAuth();
   const fadeAnim = React.useRef(new Animated.Value(0)).current;
@@ -31,11 +29,10 @@ export default function RegisterScreen() {
       setError("Passwords don't match");
       return;
     }
-
     setLoading(true);
     setError("");
     try {
-      await register(email, password);
+      await register(email, password, "ROLE_USER");
       router.replace("/home");
     } catch (err) {
       setError("Registration failed. Please try again.");
@@ -155,7 +152,6 @@ const styles = StyleSheet.create({
     fontSize: 42,
     color: "#fff",
     textAlign: "center",
-
     marginTop: 160,
     fontFamily: "Poppins-Bold",
     textShadowColor: "rgba(139, 92, 246, 0.5)",
@@ -187,26 +183,6 @@ const styles = StyleSheet.create({
     height: 56,
     fontSize: 16,
     fontFamily: "Poppins-Regular",
-  },
-  rememberForgotContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 24,
-  },
-  rememberContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  rememberText: {
-    color: "#E5E7EB",
-    marginLeft: 8,
-    fontFamily: "Poppins-Regular",
-  },
-  forgotPassword: {
-    color: "#8B5CF6",
-    fontSize: 14,
-    fontFamily: "Poppins-Medium",
   },
   error: {
     color: "#EF4444",

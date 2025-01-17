@@ -230,9 +230,9 @@ export default function LoginScreen() {
           <TouchableOpacity onPress={() => router.push("/home")}>
             <Text style={styles.forgotPassword}>Forgot Password?</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => router.push("/room/123456")}>
+          {/* <TouchableOpacity onPress={() => router.push("/room/123456")}>
             <Text style={styles.forgotPassword}>Direct to room</Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </View>
         {error ? <Text style={styles.error}>{error}</Text> : null}
         <TouchableOpacity
