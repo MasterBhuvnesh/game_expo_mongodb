@@ -166,6 +166,7 @@ export default function LoginScreen() {
     } catch (err) {
       setError("Invalid credentials");
     } finally {
+      console.log(email);
       setLoading(false);
     }
   };

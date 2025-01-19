@@ -33,7 +33,7 @@ export default function RegisterScreen() {
     setError("");
     try {
       await register(email, password, "ROLE_USER");
-      router.replace("/home");
+      router.replace("/login");
     } catch (err) {
       setError("Registration failed. Please try again.");
     } finally {
