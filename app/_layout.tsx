@@ -27,7 +27,9 @@ export default function Layout() {
               animation: "slide_from_right",
               headerShown: false,
             }}
-          />
+          >
+            <Stack.Screen name="leaderboard" />
+          </Stack>
         </LoadingProvider>
       </AuthProvider>
     </PaperProvider>

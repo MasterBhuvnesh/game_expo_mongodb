@@ -1,139 +1,66 @@
-// import React, { useState, useEffect } from "react";
-// import { View, StyleSheet } from "react-native";
-// import { Text, Button } from "react-native-paper";
-// import { useLocalSearchParams, router } from "expo-router";
-// import { api } from "../../services/api";
-// import { useLoading } from "../../contexts/LoadingContext";
-// import GameBoard from "../../components/GameBoard";
-// import InputSection from "../../components/InputSection";
-// import ProfitSection from "../../components/ProfitSection";
-// import { StatusBar } from "expo-status-bar";
-// import { SafeAreaView } from "react-native-safe-area-context";
-
-// export default function RoomScreen() {
-//   const { roomCode } = useLocalSearchParams();
-//   const [gameState, setGameState] = useState(api.initialGameState);
-//   const [isGameStarted, setIsGameStarted] = useState(false);
-//   const [bet, setBet] = useState(10);
-//   const [mines, setMines] = useState(3);
-//   const { setLoading } = useLoading();
-
-//   const startGame = async () => {
-//     setLoading(true);
-//     try {
-//       const newGameState = await api.startGame(bet, mines, roomCode as string);
-//       setGameState(newGameState);
-//       setIsGameStarted(true);
-//     } catch (error) {
-//       console.error("Error starting game:", error);
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   const handleGameEnd = (isWin: boolean) => {
-//     setIsGameStarted(false);
-//     // Implement win/lose logic
-//   };
-
-//   const handleCashOut = async () => {
-//     if (!gameState.gameId) return;
-
-//     setLoading(true);
-//     try {
-//       const cashoutAmount = await api.cashout(
-//         gameState.gameId,
-//         roomCode as string
-//       );
-//       setIsGameStarted(false);
-//       setGameState(api.initialGameState);
-//       // Show cashout amount to user
-//     } catch (error) {
-//       console.error("Error cashing out:", error);
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   return (
-//     <SafeAreaView style={styles.container}>
-//       <StatusBar style="auto" />
-//       <Text style={styles.title}>Room: {roomCode}</Text>
-
-//       <GameBoard
-//         gameState={gameState}
-//         setGameState={setGameState}
-//         isGameStarted={isGameStarted}
-//         onGameEnd={handleGameEnd}
-//         bet={bet}
-//         roomCode={roomCode as string}
-//       />
-//       <ProfitSection
-//         profit={gameState.multiplier}
-//         pointsToGain={bet * gameState.multiplier}
-//         isGameStarted={isGameStarted}
-//         onCashOut={handleCashOut}
-//       />
-//       <InputSection
-//         bet={bet}
-//         setBet={setBet}
-//         mines={mines}
-//         setMines={setMines}
-//         startGame={startGame}
-//         isGameStarted={isGameStarted}
-//         maxBet={1000} // Adjust as needed
-//       />
-//       <Button
-//         mode="outlined"
-//         onPress={() => router.back()}
-//         style={styles.button}
-//       >
-//         Leave Room
-//       </Button>
-//     </SafeAreaView>
-//   );
-// }
-
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     backgroundColor: "#1F2937",
-//     alignItems: "center",
-//     justifyContent: "center",
-//     padding: 20,
-//   },
-//   title: {
-//     fontSize: 24,
-//     color: "#ffffff",
-//     marginBottom: 20,
-//     textAlign: "center",
-//     fontFamily: "Poppins-Bold",
-//   },
-//   button: {
-//     marginTop: 20,
-//   },
-// });
-
 import React, { useState, useEffect } from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, Animated, Pressable } from "react-native";
 import { Text } from "react-native-paper";
 import { useLocalSearchParams, router } from "expo-router";
-import { api } from "../../services/api";
-import { useLoading } from "../../contexts/LoadingContext";
-import GameBoard from "../../components/GameBoard";
-import InputSection from "../../components/InputSection";
-import ProfitSection from "../../components/ProfitSection";
+import { MaterialCommunityIcons as Icon } from "@expo/vector-icons";
+import { LinearGradient } from "expo-linear-gradient";
+import { api } from "@/services/api";
+import { useLoading } from "@/contexts/LoadingContext";
+import GameBoard from "@/components/GameBoard";
+import InputSection from "@/components/InputSection";
+import ProfitSection from "@/components/ProfitSection";
 import { StatusBar } from "expo-status-bar";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { MaterialCommunityIcons as Icon } from "@expo/vector-icons";
 
-export default function RoomScreen() {
+interface RoomDetails {
+  owner: string;
+  timeLimit: number;
+  prizes: {
+    first: number;
+    second: number;
+    third: number;
+  };
+}
+
+export default function RoomDetailsScreen() {
   const { roomCode } = useLocalSearchParams();
+  const { setLoading } = useLoading();
+  const [details, setDetails] = useState<RoomDetails | null>(null);
   const [gameState, setGameState] = useState(api.initialGameState);
   const [isGameStarted, setIsGameStarted] = useState(false);
   const [bet, setBet] = useState(10);
   const [mines, setMines] = useState(3);
-  const { setLoading } = useLoading();
+  const fadeAnim = React.useRef(new Animated.Value(0)).current;
+  const scaleAnim = React.useRef(new Animated.Value(0.9)).current;
+
+  useEffect(() => {
+    const loadRoomDetails = async () => {
+      setLoading(true);
+      try {
+        const response = await api.getRoomDetails(roomCode as string);
+        setDetails(response);
+        Animated.parallel([
+          Animated.timing(fadeAnim, {
+            toValue: 1,
+            duration: 800,
+            useNativeDriver: true,
+          }),
+          Animated.spring(scaleAnim, {
+            toValue: 1,
+            friction: 8,
+            useNativeDriver: true,
+          }),
+        ]).start();
+      } catch (error) {
+        console.error("Error loading room details:", error);
+        router.back();
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadRoomDetails();
+  }, [roomCode]);
 
   const startGame = async () => {
     setLoading(true);
@@ -170,12 +97,23 @@ export default function RoomScreen() {
     }
   };
 
+  const handleLeaderboardPress = () => {
+    if (typeof roomCode === "string") {
+      router.push(`/leaderboard?roomCode=${roomCode}`);
+    }
+  };
+
+  if (!details) return null;
+
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar style="light" />
       <View style={styles.header}>
         <Text style={styles.title}>Mines</Text>
-        <View style={styles.leaderboardButton}>
+        <Pressable
+          style={styles.leaderboardButton}
+          onPress={handleLeaderboardPress}
+        >
           <Text style={styles.leaderboardText}>Leaderboard</Text>
           <Icon
             name="star-four-points"
@@ -183,32 +121,79 @@ export default function RoomScreen() {
             color="#fff"
             style={styles.sparkle}
           />
-        </View>
+        </Pressable>
       </View>
 
-      <GameBoard
-        gameState={gameState}
-        setGameState={setGameState}
-        isGameStarted={isGameStarted}
-        onGameEnd={handleGameEnd}
-        bet={bet}
-        roomCode={roomCode as string}
-      />
-      <InputSection
-        bet={bet}
-        setBet={setBet}
-        mines={mines}
-        setMines={setMines}
-        startGame={startGame}
-        isGameStarted={isGameStarted}
-        maxBet={1000}
-      />
-      <ProfitSection
-        profit={gameState.multiplier}
-        pointsToGain={bet * gameState.multiplier}
-        isGameStarted={isGameStarted}
-        onCashOut={handleCashOut}
-      />
+      <Animated.View
+        style={[
+          styles.content,
+          {
+            opacity: fadeAnim,
+            transform: [{ scale: scaleAnim }],
+          },
+        ]}
+      >
+        <View style={styles.iconContainer}>
+          <LinearGradient
+            colors={["#bf00ff", "#8000ff"]}
+            style={styles.iconBackground}
+          >
+            <Icon
+              name="diamond-stone"
+              size={50}
+              color="#fff"
+              style={styles.icon}
+            />
+          </LinearGradient>
+        </View>
+
+        <View style={styles.infoBox}>
+          <View style={styles.infoRow}>
+            <Text style={styles.label}>Owner of Arena:</Text>
+            <Text style={styles.ownerName}>{details.owner}</Text>
+          </View>
+
+          <View style={styles.infoRow}>
+            <Text style={styles.label}>Time:</Text>
+            <Text style={styles.value}>{details.timeLimit} min</Text>
+          </View>
+
+          <View style={styles.infoRow}>
+            <Text style={styles.label}>Winner Prizes:</Text>
+            <View style={styles.prizesList}>
+              <Text style={styles.value}>1st - {details.prizes.first}k</Text>
+              <Text style={styles.value}>2nd - {details.prizes.second}k</Text>
+              <Text style={styles.value}>3rd - {details.prizes.third}k</Text>
+            </View>
+          </View>
+        </View>
+
+        <GameBoard
+          gameState={gameState}
+          setGameState={setGameState}
+          isGameStarted={isGameStarted}
+          onGameEnd={handleGameEnd}
+          bet={bet}
+          roomCode={roomCode as string}
+        />
+
+        <InputSection
+          bet={bet}
+          setBet={setBet}
+          mines={mines}
+          setMines={setMines}
+          startGame={startGame}
+          isGameStarted={isGameStarted}
+          maxBet={1000}
+        />
+
+        <ProfitSection
+          profit={gameState.multiplier}
+          pointsToGain={bet * gameState.multiplier}
+          isGameStarted={isGameStarted}
+          onCashOut={handleCashOut}
+        />
+      </Animated.View>
     </SafeAreaView>
   );
 }
@@ -216,8 +201,9 @@ export default function RoomScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#000000",
-    padding: 16,
+    backgroundColor: "#0A0A0F",
+    padding: 20,
+    justifyContent: "center",
   },
   header: {
     flexDirection: "row",
@@ -246,5 +232,49 @@ const styles = StyleSheet.create({
   },
   sparkle: {
     marginLeft: 4,
+  },
+  content: {
+    alignItems: "center",
+    width: "100%",
+  },
+  iconContainer: {
+    marginBottom: 40,
+  },
+  iconBackground: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  icon: {
+    transform: [{ rotate: "45deg" }],
+  },
+  infoBox: {
+    width: "100%",
+    backgroundColor: "rgba(255, 255, 255, 0.1)",
+    borderRadius: 15,
+    padding: 20,
+    marginBottom: 40,
+  },
+  infoRow: {
+    marginBottom: 20,
+  },
+  label: {
+    fontSize: 16,
+    color: "#4a9eff",
+    marginBottom: 5,
+  },
+  ownerName: {
+    fontSize: 24,
+    color: "#fff",
+    fontWeight: "bold",
+  },
+  value: {
+    fontSize: 20,
+    color: "#fff",
+  },
+  prizesList: {
+    marginTop: 5,
   },
 });

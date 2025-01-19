@@ -1,22 +1,30 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { View, StyleSheet, ScrollView } from "react-native";
 import { Text } from "react-native-paper";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-
-interface LeaderboardEntry {
-  rank: number;
-  username: string;
-  score: number;
-}
+import { api, LeaderboardEntry } from "../services/api";
+import { useLocalSearchParams } from "expo-router";
 
 export default function LeaderboardScreen() {
-  // Mock data - replace with actual API call
-  const leaderboardData: LeaderboardEntry[] = [
-    { rank: 1, username: "Player1", score: 1000 },
-    { rank: 2, username: "Player2", score: 850 },
-    { rank: 3, username: "Player3", score: 700 },
-    // Add more entries as needed
-  ];
+  const { roomCode } = useLocalSearchParams(); // Get the room code from the URL
+  const [leaderboardData, setLeaderboardData] = useState<LeaderboardEntry[]>(
+    []
+  );
+
+  useEffect(() => {
+    const fetchLeaderboard = async () => {
+      try {
+        if (typeof roomCode === "string") {
+          const data = await api.getLeaderboard(roomCode);
+          setLeaderboardData(data);
+        }
+      } catch (error) {
+        console.error("Failed to fetch leaderboard:", error);
+      }
+    };
+
+    fetchLeaderboard();
+  }, [roomCode]);
 
   return (
     <View style={styles.container}>
@@ -30,16 +38,16 @@ export default function LeaderboardScreen() {
       </View>
 
       <ScrollView style={styles.leaderboard}>
-        {leaderboardData.map((entry) => (
+        {leaderboardData.map((entry, index) => (
           <View
-            key={entry.rank}
+            key={entry.gameId}
             style={styles.entry}
           >
             <View style={styles.rankContainer}>
-              <Text style={styles.rank}>#{entry.rank}</Text>
+              <Text style={styles.rank}>#{index + 1}</Text>
             </View>
-            <Text style={styles.username}>{entry.username}</Text>
-            <Text style={styles.score}>{entry.score}</Text>
+            <Text style={styles.username}>Game ID: {entry.gameId}</Text>
+            <Text style={styles.score}>{entry.cashoutAmount}</Text>
           </View>
         ))}
       </ScrollView>
