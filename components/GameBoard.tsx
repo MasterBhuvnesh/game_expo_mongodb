@@ -36,6 +36,8 @@ Alert.alert(
   "Good luck! Choose your path carefully.",
   [{ text: "OK", onPress: () => setGameStartAlertShown(true) }]
 );
+
+alert("Game Started \n Good luck! Choose your path carefully.");
 console.log("Game Started", "Good luck! Choose your path carefully.");
     }
   }, [isGameStarted, gameStartAlertShown]);
@@ -65,10 +67,12 @@ console.log("Game Started", "Good luck! Choose your path carefully.");
           setGameState((prevState) => ({ ...prevState, board: updatedBoard }));
          if(newGameState.isWin){
           Alert.alert("You Win!", "Congratulations, you found the treasure!");
+          alert("You Win : Congratulations, you found the treasure!");
           console.log("You Win!", "Congratulations, you found the treasure!");
             onGameEnd(true)
         } else {
             Alert.alert("Game Over!", "You hit a bomb!");
+            alert("Game Over! : You hit a bomb!");
             console.log("Game Over!", "You hit a bomb!")
             onGameEnd(false)
         }

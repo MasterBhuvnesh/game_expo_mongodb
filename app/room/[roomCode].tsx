@@ -248,6 +248,7 @@ import ProfitSection from "@/components/ProfitSection";
 import { StatusBar } from "expo-status-bar";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useAuth } from "@/contexts/AuthContext";
+import { storeGameId } from "@/utils/storage";
 
 interface RoomDetails {
   owner: string;
@@ -285,25 +286,28 @@ export default function RoomDetailsScreen() {
       }),
     ]).start();
   }, []);
+const startGame = async () => {
+  if (!roomCode || typeof roomCode !== 'string') {
+    Alert.alert('Error', 'Invalid room code');
+    alert('Error : Invalid room code');
+    return;
+  }
 
-  const startGame = async () => {
-    if (!roomCode || typeof roomCode !== 'string') {
-      Alert.alert('Error', 'Invalid room code');
-      return;
-    }
-
-    setLoading(true);
-    try {
-      const newGameState = await api.startGame(bet, mines, roomCode);
-      setGameState(newGameState);
-      setIsGameStarted(true);
-    } catch (error) {
-      Alert.alert('Error', 'Failed to start game. Please try again.');
-      console.error("Error starting game:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  setLoading(true);
+  try {
+    const newGameState = await api.startGame(bet, mines, roomCode);
+    setGameState(newGameState);
+    setIsGameStarted(true);
+    console.log("Game ID:", newGameState.gameId);
+    await storeGameId(newGameState.gameId as string); 
+  } catch (error) {
+    Alert.alert('Error', 'Failed to start game. Please try again.');
+    alert('Error : Failed to start game. Please try again.');
+    console.error("Error starting game:", error);
+  } finally {
+    setLoading(false);
+  }
+};
 
   // const handleBoxClick = async (index: number) => {
   //   if (!gameState.gameId || !roomCode || typeof roomCode !== 'string') return;
@@ -328,6 +332,7 @@ export default function RoomDetailsScreen() {
     setIsGameStarted(false);
     if (isWin) {
       Alert.alert('Congratulations!', 'You won! Would you like to play again?');
+      alert( 'You won! Would you like to play again?');
     }
   };
 
@@ -337,11 +342,11 @@ export default function RoomDetailsScreen() {
     setLoading(true);
     try {
       const cashoutAmount = await api.cashout(gameState.gameId, roomCode);
-      Alert.alert('Success', `Successfully cashed out ${cashoutAmount} coins!`);
       setIsGameStarted(false);
       setGameState(api.initialGameState);
     } catch (error) {
       Alert.alert('Error', 'Failed to cash out. Please try again.');
+      alert('Failed to cash out. Please try again.');
       console.error("Error cashing out:", error);
     } finally {
       setLoading(false);

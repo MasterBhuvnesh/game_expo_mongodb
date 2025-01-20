@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { View, StyleSheet, Image, Pressable } from "react-native";
+import React, { useState, useEffect } from "react";
+import { View, StyleSheet, Image, Pressable, Alert } from "react-native";
 import { Text } from "react-native-paper";
 import { router } from "expo-router";
 import { LoadingScreen } from "../components/LoadingScreen";
@@ -7,10 +7,24 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useAuth } from "../contexts/AuthContext";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
+import { api } from "@/services/api";
+import { isOwnerOrAdmin } from "@/services/owner"; // Import the isOwnerOrAdmin function
 
 export default function HomeScreen() {
   const [isLoading, setIsLoading] = useState(true);
+  const [isAdminOrOwner, setIsAdminOrOwner] = useState(false); // State to store the role check result
   const { user } = useAuth();
+
+  useEffect(() => {
+    // Check if the user is an owner or admin when the component mounts
+    const checkRole = async () => {
+      const result = await isOwnerOrAdmin();
+      setIsAdminOrOwner(result);
+      setIsLoading(false); // Set loading to false after the check is complete
+    };
+
+    checkRole();
+  }, []);
 
   const handleLoadingComplete = () => {
     setIsLoading(false);
@@ -18,6 +32,18 @@ export default function HomeScreen() {
 
   const handleEnterRoom = () => {
     router.push("/room/join");
+  };
+
+  const handleCreateRoom = () => {
+    api.createRoom().then((response) => {
+      console.log(response);
+      const roomCode = response.code; // Extract the room code from the response
+      Alert.alert("Room Created", `Room created successfully!\nRoom Code: ${roomCode}`);
+      alert(`Room created successfully!\nRoom Code: ${roomCode}`);
+    }).catch((error) => {
+      console.error(error);
+      Alert.alert("Error", "Error creating room!");
+    });
   };
 
   if (isLoading) {
@@ -50,16 +76,26 @@ export default function HomeScreen() {
         </LinearGradient>
       </Pressable>
 
-      <View style={[styles.card, styles.comingSoonCard]}>
-        <Image
-          source={require("../assets/images/upcoming.png")}
-          style={styles.cardImage}
-        />
-        <View style={styles.cardContent}>
-          <Text style={styles.cardTitle}>More Games</Text>
-          <Text style={styles.comingSoonText}>Coming Soon...</Text>
-        </View>
-      </View>
+      {/* Conditionally render the "Create Room" button */}
+      {isAdminOrOwner && (
+        <Pressable onPress={handleCreateRoom}>
+          <LinearGradient
+            colors={["#4f46e5", "#7c3aed"]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={styles.card}
+          >
+            <Image
+              source={require("../assets/images/upcoming.png")}
+              style={styles.cardImage}
+            />
+            <View style={styles.cardContent}>
+              <Text style={styles.cardTitle}>Mines</Text>
+              <Text style={styles.cardButton}>Create the Room</Text>
+            </View>
+          </LinearGradient>
+        </Pressable>
+      )}
     </SafeAreaView>
   );
 }

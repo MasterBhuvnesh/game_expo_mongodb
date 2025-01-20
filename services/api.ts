@@ -1,8 +1,9 @@
 
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Alert } from "react-native";
 
-const BASE_URL = "http://localhost:8080"; // Replace with your actual backend URL
+const BASE_URL = "https://minesbackend-production.up.railway.app"; // Replace with your actual backend URL
 
 export type BoxStatus = "empty" | "mine" | "clicked" | "safe";
 
@@ -46,12 +47,9 @@ class ApiService {
       const token = await AsyncStorage.getItem("token");
       const response = await axios.post(
         `${BASE_URL}/api/join-room?code=${roomCode}`,
-        {}, // Pass an empty object for the request body if no data is needed
-       {headers: {
-        Authorization: `Bearer ${token}`,
-      },}
+        {  },
+        await this.getAuthHeader()
       );
-
       return response.data;
     } catch (error) {
       console.error("Error joining room:", error);
@@ -72,12 +70,12 @@ class ApiService {
     }
   }
 
-  async createRoom(timeoutMinutes: number) {
+  async createRoom() {
     try {
       const response = await axios.post(
-        `${BASE_URL}/api/admin/create-room`,
-        { timeoutMinutes },
-         await this.getAuthHeader()
+        `${BASE_URL}/api/admin/create-room?timeoutMinutes=100&`,
+        {  },
+        await this.getAuthHeader()
       );
       return response.data;
     } catch (error) {
@@ -151,55 +149,55 @@ class ApiService {
       throw error;
     }
   }
-
-  async cashout(gameId: string, roomCode: string): Promise<GameState> {
-    try {
-      const response = await axios.post(
-        `${BASE_URL}/rooms/${roomCode}/games/${gameId}/cashout`,
-        {},
-        await this.getAuthHeader()
-      );
-         const newBoard = new Array(25).fill("empty");
-        
-      return {
-           board: newBoard,
-            isGameOver: true,
-            isWin: false,
-             multiplier: 1,
-            gameId: gameId,
-             isCashOut: true
-
-      };
-    } catch (error) {
-      console.error("Error cashing out:", error);
-      throw error;
-    }
+async cashout(gameId: string, roomCode: string): Promise<GameState> {
+  try {
+    const response = await axios.post(
+      `${BASE_URL}/rooms/${roomCode}/games/${gameId}/cashout`,
+      {},
+      await this.getAuthHeader()
+    );
+    console.log("Cashout Amount:", response.data.cashoutAmount);
+Alert.alert(`Cashout Amount: ${response.data.cashoutAmount.toFixed(2)}`);
+alert(`Cashout Amount: ${response.data.cashoutAmount.toFixed(2)}`);
+    const newBoard = new Array(25).fill("empty");
+    
+    return {
+      board: newBoard,
+      isGameOver: true,
+      isWin: false,
+      multiplier: 1,
+      gameId: gameId,
+      isCashOut: true
+    };
+  } catch (error) {
+    console.error("Error cashing out:", error);
+    throw error;
   }
+}
+async getLeaderboard(roomCode: string): Promise<LeaderboardEntry[]> {
+  try {
+    const response = await axios.get(
+      `${BASE_URL}/api/${roomCode}/game-cashouts`,
+      await this.getAuthHeader()
+    );
 
-  async getLeaderboard(roomCode: string): Promise<LeaderboardEntry[]> {
-    try {
-      const response = await axios.get(
-        `${BASE_URL}/api/${roomCode}/game-cashouts`,
-         await this.getAuthHeader()
-      );
-
-      // Convert the response data into an array of LeaderboardEntry objects
-      const leaderboardData: LeaderboardEntry[] = Object.entries(
-        response.data
-      ).map(([gameId, cashoutAmount]) => ({
+    // Transform the response object into an array of LeaderboardEntry objects
+    const leaderboardData: LeaderboardEntry[] = Object.entries(response.data).map(
+      ([gameId, cashoutAmount]) => ({
         gameId,
-        cashoutAmount: Number(cashoutAmount),
-      }));
+        cashoutAmount: Number(cashoutAmount), // Ensure cashoutAmount is a number
+      })
+    );
 
-      // Sort the leaderboard by cashoutAmount in descending order
-      leaderboardData.sort((a, b) => b.cashoutAmount - a.cashoutAmount);
+    // Sort the leaderboard by cashoutAmount in descending order
+    leaderboardData.sort((a, b) => b.cashoutAmount - a.cashoutAmount);
 
-      return leaderboardData;
-    } catch (error) {
-      console.error("Error getting leaderboard:", error);
-      throw error;
-    }
+    return leaderboardData;
+  } catch (error) {
+    console.error("Error getting leaderboard:", error);
+    throw error;
   }
+}
 
   initialGameState: GameState = {
     board: new Array(25).fill("empty"),
