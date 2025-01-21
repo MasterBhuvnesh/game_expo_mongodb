@@ -47,14 +47,14 @@ const InputSection: React.FC<InputSectionProps> = ({
           textColor="white"
         />
       </View>
-     {!isGameStarted && (
-  <TouchableOpacity
-    style={styles.betButton}
-    onPress={startGame}
-  >
-    <Text style={styles.betButtonText}>Start Game</Text>
-  </TouchableOpacity>
-)}
+      {!isGameStarted && (
+        <TouchableOpacity
+          style={styles.betButton}
+          onPress={startGame}
+        >
+          <Text style={styles.betButtonText}>Start Game</Text>
+        </TouchableOpacity>
+      )}
     </View>
   );
 };
@@ -63,6 +63,8 @@ const styles = StyleSheet.create({
   container: {
     gap: 16,
     marginBottom: 24,
+    // backgroundColor: "white",
+    width: "100%",
   },
   inputContainer: {
     flexDirection: "row",
@@ -94,7 +96,7 @@ const styles = StyleSheet.create({
   },
   betButtonText: {
     color: "#fff",
-    padding:5,
+    padding: 5,
     fontSize: 14,
     fontFamily: "Poppins-Medium",
   },

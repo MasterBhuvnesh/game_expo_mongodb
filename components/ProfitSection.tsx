@@ -1,4 +1,3 @@
-
 import React from "react";
 import { StyleSheet, View, TouchableOpacity } from "react-native";
 import { Text } from "react-native-paper";
@@ -12,22 +11,26 @@ interface ProfitSectionProps {
 
 const ProfitSection: React.FC<ProfitSectionProps> = ({
   profit,
-  pointsToGain,
   isGameStarted,
   onCashOut,
 }) => {
   return (
     <View style={styles.container}>
-      <Text style={styles.profitText}>Profit: {profit.toFixed(2)}x</Text>
-      
-     {(!isGameStarted || profit === 0) ? null : (
-  <TouchableOpacity
-    style={[styles.cashoutButton, !isGameStarted && styles.disabledButton]}
-    onPress={onCashOut}
-  >
-    <Text style={styles.cashoutButtonText}>Cash Out</Text>
-  </TouchableOpacity>
-)}
+      {(isGameStarted || profit === 0) && Number(profit.toFixed(2)) > 1.0 && (
+        <Text style={styles.profitText}>Profit: {profit.toFixed(2)}x</Text>
+      )}
+
+      {!isGameStarted || profit === 0 ? null : (
+        <TouchableOpacity
+          style={[
+            styles.cashoutButton,
+            !isGameStarted && styles.disabledButton,
+          ]}
+          onPress={onCashOut}
+        >
+          <Text style={styles.cashoutButtonText}>Cash Out</Text>
+        </TouchableOpacity>
+      )}
     </View>
   );
 };
@@ -42,9 +45,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
     color: "#ffffff",
-    
   },
-
   cashoutButton: {
     backgroundColor: "#7C3AED",
     paddingVertical: 12,

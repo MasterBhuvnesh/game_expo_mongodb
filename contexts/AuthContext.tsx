@@ -30,19 +30,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 }) => {
   const [user, setUser] = useState<User | null>(null);
 
- 
-
   const login = async (name: string, password: string) => {
     try {
-      const response = await axios.post("https://minesbackend-production.up.railway.app/auth/login", {
-        name,
-        password,
-      });
+      const response = await axios.post(
+        "https://minesbackend-production.up.railway.app/auth/login",
+        {
+          name,
+          password,
+        }
+      );
       const { jwtTocken, username } = response.data;
       console.log("Token received:", jwtTocken); // Debugging log
       await AsyncStorage.setItem("token", jwtTocken);
       await AsyncStorage.setItem("name", username);
-      localStorage.setItem("name",username);
       console.log("Token stored in AsyncStorage"); // Debugging log
       setUser(username);
     } catch (error) {
@@ -64,11 +64,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const register = async (name: string, password: string, role: string) => {
     try {
       console.log(name, password, role);
-      const response = await axios.post("https://minesbackend-production.up.railway.app/auth/register", {
-        name,
-        password,
-        role,
-      });
+      const response = await axios.post(
+        "https://minesbackend-production.up.railway.app/auth/register",
+        {
+          name,
+          password,
+          role,
+        }
+      );
     } catch (error) {
       console.error("Registration error:", error);
       throw error;

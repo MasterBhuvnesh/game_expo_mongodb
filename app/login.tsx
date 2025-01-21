@@ -1,117 +1,3 @@
-// import React, { useState } from "react";
-// import { View, StyleSheet, Animated } from "react-native";
-// import { TextInput, Button, Text, ActivityIndicator } from "react-native-paper";
-// import { LinearGradient } from 'expo-linear-gradient';
-
-// // import { useAuth } from '../contexts/AuthContext';
-// import { router } from "expo-router";
-// import { StatusBar } from "expo-status-bar";
-// export default function LoginScreen() {
-//   const [email, setEmail] = useState("");
-//   const [password, setPassword] = useState("");
-//   const [loading, setLoading] = useState(false);
-//   const [error, setError] = useState("");
-//   // const { login } = useAuth();
-//   const fadeAnim = React.useRef(new Animated.Value(0)).current;
-
-//   React.useEffect(() => {
-//     Animated.timing(fadeAnim, {
-//       toValue: 1,
-//       duration: 1000,
-//       useNativeDriver: true,
-//     }).start();
-//   }, []);
-
-// const handleLogin = async () => {
-//   setLoading(true);
-//   setError("");
-//   try {
-//     // await login(email, password);
-//     router.replace("/home");
-//   } catch (err) {
-//     setError("Invalid credentials");
-//   } finally {
-//     setLoading(false);
-//   }
-// };
-
-//   return (
-//     <Animated.View style={[styles.container, { opacity: fadeAnim }]}>
-//       <Text style={styles.title}>Login</Text>
-//       <View style={styles.maincontainer}>
-//         <StatusBar style="auto" />
-
-//         <TextInput
-//           style={styles.input}
-//           label="Email"
-//           value={email}
-//           onChangeText={setEmail}
-//           mode="outlined"
-//           autoCapitalize="none"
-//         />
-//         <TextInput
-//           style={styles.input}
-//           label="Password"
-//           value={password}
-//           onChangeText={setPassword}
-//           secureTextEntry
-//           mode="outlined"
-//         />
-//         {error ? <Text style={styles.error}>{error}</Text> : null}
-//         <Button
-//           mode="contained"
-//           onPress={handleLogin}
-//           style={styles.button}
-//           disabled={loading}
-//         >
-//           {loading ? <ActivityIndicator color="white" /> : "Login"}
-//         </Button>
-//         <Button
-//           mode="text"
-//           onPress={() => router.push("/register")}
-//           style={styles.button}
-//         >
-//           Create Account
-//         </Button>
-//       </View>
-//     </Animated.View>
-//   );
-// }
-
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     backgroundColor: "#121226",
-//     padding: 20,
-//     // justifyContent: "center",
-//   },
-//   maincontainer: {
-//     // alignSelf: "flex-end",
-//     backgroundColor: "red",
-//     padding: 20,
-//     justifyContent: "center",
-//   },
-//   title: {
-//     fontSize: 48,
-//     color: "#ffffff",
-//     marginBottom: 20,
-//     textAlign: "center",
-//   },
-//   input: {
-//     marginBottom: 10,
-//     backgroundColor: "#252836",
-//   },
-//   button: {
-//     marginVertical: 10,
-//     padding: 5,
-//   },
-//   error: {
-//     color: "#ff4d4d",
-//     marginBottom: 10,
-//     textAlign: "center",
-//   },
-// });
-
 import React, { useState } from "react";
 import {
   View,
@@ -132,7 +18,6 @@ export default function LoginScreen() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [rememberMe, setRememberMe] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const { login } = useAuth();
   const fadeAnim = React.useRef(new Animated.Value(0)).current;
@@ -219,22 +104,7 @@ export default function LoginScreen() {
             },
           }}
         />
-        <View style={styles.rememberForgotContainer}>
-          <View style={styles.rememberContainer}>
-            <Checkbox
-              status={rememberMe ? "checked" : "unchecked"}
-              onPress={() => setRememberMe(!rememberMe)}
-              color="#8B5CF6"
-            />
-            <Text style={styles.rememberText}>Remember me</Text>
-          </View>
-          <TouchableOpacity onPress={() => router.push("/home")}>
-            <Text style={styles.forgotPassword}>Forgot Password?</Text>
-          </TouchableOpacity>
-          {/* <TouchableOpacity onPress={() => router.push("/room/123456")}>
-            <Text style={styles.forgotPassword}>Direct to room</Text>
-          </TouchableOpacity> */}
-        </View>
+
         {error ? <Text style={styles.error}>{error}</Text> : null}
         <TouchableOpacity
           onPress={handleLogin}

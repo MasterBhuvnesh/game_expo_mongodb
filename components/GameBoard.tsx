@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   Text,
   Alert,
+  Image,
 } from "react-native";
 import { MaterialCommunityIcons as Icon } from "@expo/vector-icons";
 import { api, GameState } from "../services/api";
@@ -31,14 +32,12 @@ const GameBoard: React.FC<GameBoardProps> = ({
 
   useEffect(() => {
     if (isGameStarted && !gameStartAlertShown) {
-Alert.alert(
-  "Game Started",
-  "Good luck! Choose your path carefully.",
-  [{ text: "OK", onPress: () => setGameStartAlertShown(true) }]
-);
+      Alert.alert("Game Started", "Good luck! Choose your path carefully.", [
+        { text: "OK", onPress: () => setGameStartAlertShown(true) },
+      ]);
 
-alert("Game Started \n Good luck! Choose your path carefully.");
-console.log("Game Started", "Good luck! Choose your path carefully.");
+      // alert("Game Started \n Good luck! Choose your path carefully."); // Debug log
+      console.log("Game Started", "Good luck! Choose your path carefully."); // Debug log
     }
   }, [isGameStarted, gameStartAlertShown]);
 
@@ -64,19 +63,18 @@ console.log("Game Started", "Good luck! Choose your path carefully.");
         const updatedBoard = newGameState.board.map((status) =>
           status === "mine" ? "mine" : status
         );
-          setGameState((prevState) => ({ ...prevState, board: updatedBoard }));
-         if(newGameState.isWin){
+        setGameState((prevState) => ({ ...prevState, board: updatedBoard }));
+        if (newGameState.isWin) {
           Alert.alert("You Win!", "Congratulations, you found the treasure!");
-          alert("You Win : Congratulations, you found the treasure!");
-          console.log("You Win!", "Congratulations, you found the treasure!");
-            onGameEnd(true)
+          // alert("You Win : Congratulations, you found the treasure!"); // Debug log
+          console.log("You Win!", "Congratulations, you found the treasure!"); // Debug log
+          onGameEnd(true);
         } else {
-            Alert.alert("Game Over!", "You hit a bomb!");
-            alert("Game Over! : You hit a bomb!");
-            console.log("Game Over!", "You hit a bomb!")
-            onGameEnd(false)
+          Alert.alert("Game Over!", "You hit a bomb!");
+          // alert("Game Over! : You hit a bomb!"); // Debug log
+          console.log("Game Over!", "You hit a bomb!"); // Debug log
+          onGameEnd(false);
         }
-
       }
     } catch (error) {
       console.error("Error handling box click:", error);
@@ -88,51 +86,78 @@ console.log("Game Started", "Good luck! Choose your path carefully.");
       case "clicked":
       case "safe":
         return (
-          <Icon
-            name="diamond-stone"
-            size={24}
-            color="#7C3AED"
+          // <Icon
+          //   name="diamond-stone"
+          //   size={24}
+          //   color="#7C3AED"
+          // />
+          <Image
+            source={require("../assets/images/diamond.png")}
+            style={{ width: 24, height: 24 }}
           />
         );
       case "mine":
         return (
-          <Icon
-            name="bomb"
-            size={24}
-            color="#ff4d4d"
+          // <Icon
+          //   name="bomb"
+          //   size={24}
+          //   color="red"
+          // />
+          <Image
+            source={require("../assets/images/bomb.png")}
+            style={{ width: 24, height: 24 }}
           />
         );
       default:
-        return <Text style={styles.questionMark}>?</Text>;
+        return <Text style={styles.questionMark}></Text>;
     }
   };
 
   return (
-    <View style={styles.boardContainer}>
-      <View style={styles.board}>
-        {gameState.board.map((status, index) => (
-          <TouchableOpacity
-            key={index}
-            style={[
-              styles.box,
-              (status === "clicked" || status === "safe") && styles.clickedBox,
-              (!isGameStarted || gameState.isGameOver) && styles.disabledBox,
-            ]}
-            onPress={() => handleBoxClick(index)}
-            disabled={
-              !isGameStarted || status !== "empty" || gameState.isGameOver
-            }
-            testID="game-box"
-          >
-            {renderBoxContent(status)}
-          </TouchableOpacity>
-        ))}
+    <View style={styles.container}>
+      {(!isGameStarted || gameState.isGameOver) && (
+        <Text
+          style={{
+            color: "#fff",
+            fontSize: 14,
+            marginBottom: 8,
+            textAlign: "center",
+            fontFamily: "Poppins-Medium",
+            padding: 8,
+          }}
+        >
+          Touch is locked until game starts
+        </Text>
+      )}
+      <View style={styles.boardContainer}>
+        <View style={styles.board}>
+          {gameState.board.map((status, index) => (
+            <TouchableOpacity
+              key={index}
+              style={[
+                styles.box,
+                (status === "clicked" || status === "safe") &&
+                  styles.clickedBox,
+                status === "mine" && styles.mineBox,
+                (!isGameStarted || gameState.isGameOver) && styles.disabledBox,
+              ]}
+              onPress={() => handleBoxClick(index)}
+              disabled={
+                !isGameStarted || status !== "empty" || gameState.isGameOver
+              }
+              testID="game-box"
+            >
+              {renderBoxContent(status)}
+            </TouchableOpacity>
+          ))}
+        </View>
       </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
+  container: {},
   boardContainer: {
     padding: 16,
     backgroundColor: "rgba(255, 255, 255, 0.05)",
@@ -160,9 +185,14 @@ const styles = StyleSheet.create({
 
   clickedBox: {
     backgroundColor: "rgba(124, 58, 237, 0.2)",
+    borderColor: "#7C3AED",
+  },
+  mineBox: {
+    backgroundColor: "rgba(239, 68, 68, 0.2)",
+    borderColor: "#EF4444",
   },
   disabledBox: {
-    opacity: 0.5,
+    opacity: 0.8,
   },
   questionMark: {
     fontSize: 20,

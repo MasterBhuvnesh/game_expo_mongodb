@@ -93,20 +93,23 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
     marginTop: 20,
+    alignItems: "center",
   },
   codeContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
     marginBottom: 40,
+    gap: 5,
   },
   codeBox: {
-    width: 40,
+    width: 45,
     height: 45,
     borderWidth: 2,
     borderColor: "#333",
-    borderRadius: 8,
+    borderRadius: 20,
     justifyContent: "center",
     alignItems: "center",
+    marginHorizontal: 2,
   },
   codeBoxFilled: {
     borderColor: "#6366f1",
@@ -131,6 +134,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderRadius: 35,
     backgroundColor: "rgba(255, 255, 255, 0.1)",
+    marginHorizontal: 10,
   },
   numberText: {
     fontSize: 24,
