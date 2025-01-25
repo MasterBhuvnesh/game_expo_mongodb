@@ -3,7 +3,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Alert } from "react-native";
 import CashoutModal from "@/components/CashoutModal";
 
-const BASE_URL = "https://minesbackend-production.up.railway.app"; // Replace with your actual backend URL
+const BASE_URL = "https://backend-bt2q.onrender.com"; // Replace with your actual backend URL
 
 export type BoxStatus = "empty" | "mine" | "clicked" | "safe";
 
@@ -67,20 +67,6 @@ class ApiService {
       return response.data;
     } catch (error) {
       console.error("Error getting rooms:", error);
-      throw error;
-    }
-  }
-
-  async createRoom() {
-    try {
-      const response = await axios.post(
-        `${BASE_URL}/api/admin/create-room?timeoutMinutes=100&`,
-        {},
-        await this.getAuthHeader()
-      );
-      return response.data;
-    } catch (error) {
-      console.error("Error creating room:", error);
       throw error;
     }
   }
@@ -179,7 +165,7 @@ class ApiService {
   async getLeaderboard(roomCode: string): Promise<LeaderboardEntry[]> {
     try {
       const response = await axios.get(
-        `${BASE_URL}/api/${roomCode}/game-cashouts`,
+        `${BASE_URL}/api/${roomCode}/leaderboard`,
         await this.getAuthHeader()
       );
 

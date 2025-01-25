@@ -29,6 +29,7 @@ export default function Layout() {
             }}
           >
             <Stack.Screen name="leaderboard" />
+            <Stack.Screen name="createroom" />
           </Stack>
         </LoadingProvider>
       </AuthProvider>

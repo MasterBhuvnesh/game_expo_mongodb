@@ -33,7 +33,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const login = async (name: string, password: string) => {
     try {
       const response = await axios.post(
-        "https://minesbackend-production.up.railway.app/auth/login",
+        "https://backend-bt2q.onrender.com/auth/login",
         {
           name,
           password,
@@ -65,7 +65,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     try {
       console.log(name, password, role);
       const response = await axios.post(
-        "https://minesbackend-production.up.railway.app/auth/register",
+        "https://backend-bt2q.onrender.com/auth/register",
         {
           name,
           password,

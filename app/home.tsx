@@ -35,15 +35,7 @@ export default function HomeScreen() {
   };
 
   const handleCreateRoom = () => {
-    api.createRoom().then((response) => {
-      console.log(response);
-      const roomCode = response.code; // Extract the room code from the response
-      Alert.alert("Room Created", `Room created successfully!\nRoom Code: ${roomCode}`);
-      alert(`Room created successfully!\nRoom Code: ${roomCode}`);
-    }).catch((error) => {
-      console.error(error);
-      Alert.alert("Error", "Error creating room!");
-    });
+    router.push("/createroom"); // Redirect to the CreateRoomScreen
   };
 
   if (isLoading) {

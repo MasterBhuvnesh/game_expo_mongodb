@@ -1,7 +1,7 @@
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const BASE_URL = "https://minesbackend-production.up.railway.app"; // Replace with your actual backend URL
+const BASE_URL = "https://backend-bt2q.onrender.com"; // Replace with your actual backend URL
 
 /**
  * Checks if the user stored in AsyncStorage has the role `ROLE_OWNER` or `ROLE_ADMIN`.
@@ -14,8 +14,7 @@ export async function isOwnerOrAdmin(): Promise<boolean> {
     const users = response.data;
 
     // Step 2: Retrieve the name stored in AsyncStorage
-    const storedName = await AsyncStorage.getItem("name") ;
-    
+    const storedName = await AsyncStorage.getItem("name");
 
     if (!storedName) {
       console.warn("No name found in AsyncStorage");
