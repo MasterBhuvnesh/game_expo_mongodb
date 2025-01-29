@@ -3,7 +3,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Alert } from "react-native";
 import CashoutModal from "@/components/CashoutModal";
 
-const BASE_URL = "https://backend-bt2q.onrender.com"; // Replace with your actual backend URL
+const BASE_URL = process.env.BASE_URL;
 
 export type BoxStatus = "empty" | "mine" | "clicked" | "safe";
 
@@ -14,7 +14,7 @@ export interface GameState {
   multiplier: number;
   gameId?: string;
   isCashOut: boolean;
-  cashoutAmount?: number; // Add cashoutAmount property to GameState
+  cashoutAmount?: number;
 }
 
 export interface LeaderboardEntry {
@@ -37,7 +37,7 @@ class ApiService {
       console.warn("Token is not available in AsyncStorage");
       return {};
     } catch (error) {
-      console.error("Error getting auth header:", error);
+      console.log("Error getting auth header:", error);
       return {};
     }
   }
@@ -53,7 +53,7 @@ class ApiService {
       );
       return response.data;
     } catch (error) {
-      console.error("Error joining room:", error);
+      console.log("Error joining room:", error);
       throw error;
     }
   }
@@ -66,7 +66,7 @@ class ApiService {
       );
       return response.data;
     } catch (error) {
-      console.error("Error getting rooms:", error);
+      console.log("Error getting rooms:", error);
       throw error;
     }
   }
@@ -92,7 +92,7 @@ class ApiService {
         isCashOut: false,
       };
     } catch (error) {
-      console.error("Error starting game:", error);
+      console.log("Error starting game:", error);
       throw error;
     }
   }
@@ -132,7 +132,7 @@ class ApiService {
         isCashOut: false,
       };
     } catch (error) {
-      console.error("Error making move:", error);
+      console.log("Error making move:", error);
       throw error;
     }
   }
@@ -158,10 +158,11 @@ class ApiService {
         cashoutAmount: response.data.cashoutAmount, // Return the cashoutAmount
       };
     } catch (error) {
-      console.error("Error cashing out:", error);
+      console.log("Error cashing out:", error);
       throw error;
     }
   }
+
   async getLeaderboard(roomCode: string): Promise<LeaderboardEntry[]> {
     try {
       const response = await axios.get(
@@ -182,7 +183,7 @@ class ApiService {
 
       return leaderboardData;
     } catch (error) {
-      console.error("Error getting leaderboard:", error);
+      console.log("Error getting leaderboard:", error);
       throw error;
     }
   }

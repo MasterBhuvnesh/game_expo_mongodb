@@ -30,7 +30,6 @@ export default function LeaderboardScreen() {
         setLeaderboardData(data);
       }
     } catch (error) {
-      console.error("Failed to fetch leaderboard:", error);
       setError("No games have been played yet.");
     } finally {
       setIsLoading(false);
@@ -59,11 +58,7 @@ export default function LeaderboardScreen() {
   }
 
   if (error) {
-    return (
-      <View style={styles.errorContainer}>
-        <Text style={styles.errorText}>{error}</Text>
-      </View>
-    );
+    console.log(error);
   }
 
   return (

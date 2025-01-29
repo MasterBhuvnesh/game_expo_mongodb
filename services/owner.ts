@@ -1,7 +1,7 @@
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const BASE_URL = "https://backend-bt2q.onrender.com"; // Replace with your actual backend URL
+const BASE_URL = process.env.BASE_URL; // Replace with your actual backend URL
 
 /**
  * Checks if the user stored in AsyncStorage has the role `ROLE_OWNER` or `ROLE_ADMIN`.

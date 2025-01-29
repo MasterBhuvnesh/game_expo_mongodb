@@ -76,7 +76,7 @@ export default function RoomDetailsScreen() {
         await AsyncStorage.setItem("coins", response.coins.toString());
       }
     } catch (error: any) {
-      console.error("Error fetching room details:", error); // For Debugging
+      console.log("Error fetching room details:", error); // For Debugging
     }
   };
 
@@ -209,7 +209,7 @@ export default function RoomDetailsScreen() {
       await AsyncStorage.setItem("coins", updatedCoins.toString());
     } catch (error) {
       Alert.alert("Error", "Failed to start game. Please try again.");
-      console.error("Error starting game:", error); // For Debugging
+      console.log("Error starting game:", error); // For Debugging
     } finally {
       setLoading(false);
     }
@@ -231,7 +231,7 @@ export default function RoomDetailsScreen() {
       await AsyncStorage.setItem("coins", updatedCoins.toString());
     } catch (error) {
       Alert.alert("Error", "Failed to cash out. Please try again.");
-      console.error("Error cashing out:", error); // For Debugging
+      console.log("Error cashing out:", error); // For Debugging
     } finally {
       setLoading(false);
     }

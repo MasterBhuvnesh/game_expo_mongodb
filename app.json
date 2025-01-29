@@ -15,7 +15,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.bhuvnesh_verma.game"
     },
     "web": {
       "bundler": "metro",
@@ -45,6 +46,14 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "2de69655-25a8-4ab7-a9c0-ab1aba57f98f"
+      }
     }
   }
 }

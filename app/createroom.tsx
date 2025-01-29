@@ -9,7 +9,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 
-const BASE_URL = "https://backend-bt2q.onrender.com";
+const BASE_URL = process.env.BASE_URL;
 
 export default function CreateRoomScreen() {
   const { setLoading } = useLoading();
@@ -27,7 +27,6 @@ export default function CreateRoomScreen() {
     try {
       const token = await AsyncStorage.getItem("token");
       if (!token) {
-        console.warn("Token is not available in AsyncStorage");
         ToastAndroid.show(
           "Token is not available in AsyncStorage",
           ToastAndroid.SHORT
@@ -44,17 +43,9 @@ export default function CreateRoomScreen() {
           },
         }
       );
-
-      console.log(
-        "Room created with timeout minutes:",
-        timeoutMinutes,
-        "and coins:",
-        coins
-      ); // For Debugging
       ToastAndroid.show("Room created successfully!", ToastAndroid.SHORT);
       setCode(response.data.code);
     } catch (error) {
-      console.error("Error creating room:", error); // For Debugging
       ToastAndroid.show(
         "Failed to create room. Please try again.",
         ToastAndroid.SHORT

@@ -15,6 +15,7 @@ interface AuthContextType {
   register: (name: string, password: string, role: string) => Promise<void>;
 }
 
+const BASE_URL = process.env.BASE_URL;
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const useAuth = () => {
@@ -32,13 +33,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const login = async (name: string, password: string) => {
     try {
-      const response = await axios.post(
-        "https://backend-bt2q.onrender.com/auth/login",
-        {
-          name,
-          password,
-        }
-      );
+      const response = await axios.post(`${BASE_URL}/auth/login`, {
+        name,
+        password,
+      });
       const { jwtTocken, username } = response.data;
       console.log("Token received:", jwtTocken); // Debugging log
       await AsyncStorage.setItem("token", jwtTocken);
@@ -64,14 +62,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const register = async (name: string, password: string, role: string) => {
     try {
       console.log(name, password, role);
-      const response = await axios.post(
-        "https://backend-bt2q.onrender.com/auth/register",
-        {
-          name,
-          password,
-          role,
-        }
-      );
+      const response = await axios.post(`${BASE_URL}/auth/register`, {
+        name,
+        password,
+        role,
+      });
     } catch (error) {
       console.error("Registration error:", error);
       throw error;
